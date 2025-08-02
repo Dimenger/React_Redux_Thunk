@@ -1,0 +1,13 @@
+.todoContainer {
+  display: flex; /* Используем flexbox для выравнивания */
+  justify-content: space-between; /* Распределяем пространство между элементами */
+  align-items: center; /* Выравниваем элементы по центру по вертикали */
+  border-bottom: 1px solid #ccc; /* Добавляем линию снизу */
+  padding: 10px; /* Добавляем отступы для увеличения ширины */
+  width: 100%; /* Устанавливаем ширину на 100% родительского контейнера */
+}
+
+.button_container {
+  margin-left: auto; /* Отодвигаем кнопку к правому краю */
+  margin-right: 0.5cm;
+}

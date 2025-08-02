@@ -1,0 +1,19 @@
+{
+  "todos": [
+    {
+      "id": "8b7b",
+      "title": "Посадить дерево!",
+      "completed": true
+    },
+    {
+      "id": "46e9",
+      "title": "Написать письмо!",
+      "completed": true
+    },
+    {
+      "title": "Решить пример!",
+      "completed": false,
+      "id": "uovQ8Us"
+    }
+  ]
+}
