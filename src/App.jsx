@@ -9,7 +9,7 @@ import {
 } from "./selectors";
 
 import {
-  todosChange,
+  todosGet,
   searchTermChange,
   isAlphabetSortingChange,
   todoStatusChange,
@@ -29,7 +29,7 @@ export const App = () => {
     dispatch(isAlphabetSortingChange(isSortingEnabled));
 
   useEffect(() => {
-    dispatch(todosChange());
+    dispatch(todosGet());
   }, [dispatch]);
 
   // Добавление задачи - асинхронный экшен для добавления

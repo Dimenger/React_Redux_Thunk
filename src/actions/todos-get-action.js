@@ -5,7 +5,7 @@ const setTodosChange = (todos) => ({
   payload: todos,
 });
 
-export const todosChange = () => {
+export const todosGet = () => {
   return async (dispatch) => {
     const todoList = await readTodos();
     dispatch(setTodosChange(todoList));
