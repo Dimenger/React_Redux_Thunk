@@ -1,13 +1,9 @@
 export const readTodos = async () => {
-  try {
-    const response = await fetch("http://localhost:3000/todos");
-    if (!response.ok) {
-      throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("Ошибка при загрузке данных:", error);
+  const response = await fetch("http://localhost:3000/todos");
+  if (!response.ok) {
+    throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
   }
+  return response.json();
 };
 
 export const createTodo = async (newTodo) => {

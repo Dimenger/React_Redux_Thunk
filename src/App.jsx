@@ -1,20 +1,17 @@
 import { useEffect } from "react";
 import { Todos } from "./components/todos/todos";
+import { createTodo, updateTodo, deleteTodo } from "./api";
 import { ControlPanel } from "./components/control-panel/control-panel";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   todosSelector,
   isAlphabetSortingSelector,
   searchTermSelector,
 } from "./selectors";
-
 import {
-  todosGet,
+  setTodosChange,
   searchTermChange,
   isAlphabetSortingChange,
-  todoStatusChange,
-  todoDelete,
-  todoAdd,
 } from "./actions";
 
 export const App = () => {
@@ -29,24 +26,17 @@ export const App = () => {
     dispatch(isAlphabetSortingChange(isSortingEnabled));
 
   useEffect(() => {
-    dispatch(todosGet());
+    dispatch(setTodosChange());
   }, [dispatch]);
 
-  // Добавление задачи - асинхронный экшен для добавления
+  // Добавление задачи
   const handleAddTodo = async () => {
-    dispatch(todoAdd());
-  };
-
-  // Удаление задачи - асинхронный экшен для удаления
-  const handleDeleteTodo = async (id) => {
-    const todoToDelete = todos.find((todo) => todo.id === id);
-    if (!window.confirm(`Удалить задачу "${todoToDelete.title}"?`)) return;
-    dispatch(todoDelete(id));
-  };
-
-  // Обработчик изменения статуса выполнения задачи - асинхронный экшен для изменения статуса
-  const handleToggleComplete = (id, currentCompleted) => {
-    dispatch(todoStatusChange(id, currentCompleted));
+    let data = {};
+    const title = prompt("Введите название задачи");
+    if (title) {
+      data = await createTodo({ title });
+    }
+    setTodosChange((prev) => [...prev, data]);
   };
 
   // Поиск совпадений
@@ -63,6 +53,30 @@ export const App = () => {
   const filteredTodos = sortedTodos.filter((todo) =>
     todo.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Обработчик изменения статуса выполнения задачи
+  const handleToggleComplete = async (id, currentCompleted) => {
+    try {
+      await updateTodo(id, { completed: !currentCompleted });
+      // Обновляем локальный список задач
+      setTodosChange((prev) =>
+        prev.map((todo) =>
+          todo.id === id ? { ...todo, completed: !currentCompleted } : todo
+        )
+      );
+    } catch (error) {
+      console.error("Ошибка при обновлении статуса:", error);
+    }
+  };
+
+  // Удаление задачи
+
+  const handleDeleteTodo = async (id) => {
+    const todoToDelete = todos.find((todo) => todo.id === id);
+    if (!window.confirm(`Удалить задачу "${todoToDelete.title}"?`)) return;
+    await deleteTodo(id);
+    setTodosChange((prev) => prev.filter((todo) => todo.id !== id));
+  };
 
   return (
     <>

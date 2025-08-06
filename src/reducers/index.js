@@ -1,2 +1,2 @@
-export * from "./todo-reducer";
-export * from "./controlPanel-reducer";
+export * from "./control-panel-reducer";
+export * from "./todos-reducer";

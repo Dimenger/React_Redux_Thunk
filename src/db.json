@@ -8,16 +8,12 @@
     {
       "id": "46e9",
       "title": "Написать письмо!",
-      "completed": true
+      "completed": false
     },
     {
       "title": "Решить пример!",
       "completed": false,
-      "id": "uovQ8Us"
-    },
-    {
-      "completed": false,
-      "id": "SmI465E"
+      "id": "ZVokx7H"
     }
   ]
 }
