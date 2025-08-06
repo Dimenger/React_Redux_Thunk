@@ -36,7 +36,27 @@ export const App = () => {
     if (title) {
       data = await createTodo({ title });
     }
-    setTodosChange((prev) => [...prev, data]);
+    dispatch(setTodosChange());
+  };
+
+  // Удаление задачи
+
+  const handleDeleteTodo = async (id) => {
+    const todoToDelete = todos.find((todo) => todo.id === id);
+    if (!window.confirm(`Удалить задачу "${todoToDelete.title}"?`)) return;
+    await deleteTodo(id);
+    dispatch(setTodosChange());
+  };
+
+  // Обработчик изменения статуса выполнения задачи
+  const handleToggleComplete = async (id, currentCompleted) => {
+    try {
+      await updateTodo(id, { completed: !currentCompleted });
+      // Обновляем локальный список задач
+      dispatch(setTodosChange());
+    } catch (error) {
+      console.error("Ошибка при обновлении статуса:", error);
+    }
   };
 
   // Поиск совпадений
@@ -53,30 +73,6 @@ export const App = () => {
   const filteredTodos = sortedTodos.filter((todo) =>
     todo.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Обработчик изменения статуса выполнения задачи
-  const handleToggleComplete = async (id, currentCompleted) => {
-    try {
-      await updateTodo(id, { completed: !currentCompleted });
-      // Обновляем локальный список задач
-      setTodosChange((prev) =>
-        prev.map((todo) =>
-          todo.id === id ? { ...todo, completed: !currentCompleted } : todo
-        )
-      );
-    } catch (error) {
-      console.error("Ошибка при обновлении статуса:", error);
-    }
-  };
-
-  // Удаление задачи
-
-  const handleDeleteTodo = async (id) => {
-    const todoToDelete = todos.find((todo) => todo.id === id);
-    if (!window.confirm(`Удалить задачу "${todoToDelete.title}"?`)) return;
-    await deleteTodo(id);
-    setTodosChange((prev) => prev.filter((todo) => todo.id !== id));
-  };
 
   return (
     <>
