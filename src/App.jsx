@@ -1,42 +1,69 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Todos } from "./components/todos/todos";
-import { createTodo, updateTodo, deleteTodo } from "./api";
+import { readTodos, createTodo, updateTodo, deleteTodo } from "./api";
 import { ControlPanel } from "./components/control-panel/control-panel";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  todosSelector,
-  isAlphabetSortingSelector,
-  searchTermSelector,
-} from "./selectors";
-import {
-  setTodosChange,
-  searchTermChange,
-  isAlphabetSortingChange,
-} from "./actions";
 
 export const App = () => {
-  const todos = useSelector(todosSelector);
-  const searchTerm = useSelector(searchTermSelector);
-  const isAlphabetSorting = useSelector(isAlphabetSortingSelector);
+  const [todos, setTodos] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isAlphabetSorting, setIsAlphabetSorting] = useState(false);
 
-  const dispatch = useDispatch();
-
-  const setSearchTerm = (searchTerm) => dispatch(searchTermChange(searchTerm));
-  const setIsAlphabetSorting = (isSortingEnabled) =>
-    dispatch(isAlphabetSortingChange(isSortingEnabled));
-
+  // Загрузка задач при монтировании компонента
   useEffect(() => {
-    dispatch(setTodosChange());
-  }, [dispatch]);
+    const fetchFun = async () => {
+      try {
+        const todosList = await readTodos();
+        setTodos(todosList);
+      } catch (error) {
+        console.error("Ошибка при загрузке задач:", error);
+      }
+    };
+    fetchFun();
+  }, []);
 
   // Добавление задачи
   const handleAddTodo = async () => {
-    let data = {};
-    const title = prompt("Введите название задачи");
-    if (title) {
-      data = await createTodo({ title });
+    try {
+      let data = {};
+      const title = prompt("Введите название задачи");
+      if (title) {
+        data = await createTodo({ title });
+      }
+      setTodos((prev) => [...prev, data]);
+    } catch (error) {
+      console.error("Ошибка при добавлении задачи:", error);
     }
-    dispatch(setTodosChange());
+  };
+
+  // Обработчик изменения статуса выполнения задачи
+  const handleToggleComplete = async (id, currentCompleted) => {
+    try {
+      await updateTodo(id, { completed: !currentCompleted });
+      // Обновляем локальный список задач
+      setTodos((prev) =>
+        prev.map((todo) =>
+          todo.id === id ? { ...todo, completed: !currentCompleted } : todo
+        )
+      );
+    } catch (error) {
+      console.error("Ошибка при обновлении статуса:", error);
+    }
+  };
+
+  // Редактирование задачи
+  const handleEditTodo = async (id, newTitle) => {
+    try {
+      if (newTitle) {
+        await updateTodo(id, { title: newTitle });
+        setTodos((prev) =>
+          prev.map((todo) =>
+            todo.id === id ? { ...todo, title: newTitle } : todo
+          )
+        );
+      }
+    } catch (error) {
+      "Ошибка редактирования задачи:", error;
+    }
   };
 
   // Удаление задачи
@@ -45,18 +72,7 @@ export const App = () => {
     const todoToDelete = todos.find((todo) => todo.id === id);
     if (!window.confirm(`Удалить задачу "${todoToDelete.title}"?`)) return;
     await deleteTodo(id);
-    dispatch(setTodosChange());
-  };
-
-  // Обработчик изменения статуса выполнения задачи
-  const handleToggleComplete = async (id, currentCompleted) => {
-    try {
-      await updateTodo(id, { completed: !currentCompleted });
-      // Обновляем локальный список задач
-      dispatch(setTodosChange());
-    } catch (error) {
-      console.error("Ошибка при обновлении статуса:", error);
-    }
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
   };
 
   // Поиск совпадений
@@ -91,6 +107,7 @@ export const App = () => {
             completed={completed}
             handleToggleComplete={handleToggleComplete}
             handleDeleteTodo={handleDeleteTodo}
+            handleEditTodo={handleEditTodo}
             id={id}
           />
         ))}

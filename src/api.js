@@ -1,46 +1,62 @@
 export const readTodos = async () => {
-  const response = await fetch("http://localhost:3000/todos");
-  if (!response.ok) {
-    throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+  try {
+    const response = await fetch("http://localhost:3000/todos");
+    if (!response.ok) {
+      throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Ошибка загрузки:", error);
   }
-  return response.json();
 };
 
 export const createTodo = async (newTodo) => {
-  const todoDefault = { ...newTodo, completed: false };
+  try {
+    const todoDefault = { ...newTodo, completed: false };
 
-  const response = await fetch("http://localhost:3000/todos", {
-    method: "POST",
-    headers: { "Content-Type": "application/json;charset=utf-8" },
-    body: JSON.stringify(todoDefault),
-  });
-  if (!response.ok) {
-    throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+    const response = await fetch("http://localhost:3000/todos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json;charset=utf-8" },
+      body: JSON.stringify(todoDefault),
+    });
+    if (!response.ok) {
+      throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Ошибка при добавлении задачи:", error);
   }
-  return response.json();
 };
 
 export const updateTodo = async (todoId, todoData) => {
-  let url = "http://localhost:3000/todos";
-  const response = await fetch(`${url}/${todoId}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json;charset=utf-8" },
-    body: JSON.stringify(todoData),
-  });
-  if (!response.ok) {
-    throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+  try {
+    let url = "http://localhost:3000/todos";
+    const response = await fetch(`${url}/${todoId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json;charset=utf-8" },
+      body: JSON.stringify(todoData),
+    });
+    if (!response.ok) {
+      throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Ошибка при изменении задачи:", error);
   }
-  return response.json();
 };
 
 export const deleteTodo = async (todoId) => {
-  let url = "http://localhost:3000/todos";
+  try {
+    let url = "http://localhost:3000/todos";
 
-  const response = await fetch(`${url}/${todoId}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+    const response = await fetch(`${url}/${todoId}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+    }
+    return response.json();
+  } catch (error) {
+    "Ошибка при удалении задачи:", error;
   }
-  return response.json();
 };
