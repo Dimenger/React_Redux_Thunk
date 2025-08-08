@@ -46,7 +46,7 @@ export const Todos = ({
         <input
           type="text"
           value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)} // Обновляем состояние при изменении текста
+          onChange={(e) => setNewTitle(e.target.value)}
           autoFocus
           className={styles.inputStyle}
         />
@@ -57,15 +57,15 @@ export const Todos = ({
       <div className={styles.button_container}>
         {edit ? (
           <button type="button" onClick={handleEdit}>
-            💾 {/* Иконка для сохранения */}
+            💾
           </button>
         ) : (
           <div>
             <button type="button" onClick={startEdit}>
-              🖉 {/* Иконка для редактирования */}
+              🖉
             </button>
             <button type="button" onClick={handleDelete}>
-              ☠ {/* Иконка для удаления */}
+              ☠
             </button>
           </div>
         )}
